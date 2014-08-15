@@ -41,6 +41,12 @@ end
 
 # Instance validation methods for the Sequel 3.x
 module CarrierWave::Sequel::Validations
+  def validate
+    super
+    self.class.uploaders.each_key do |column|
+      errors.add(column, "is invalid") if send("#{column}_integrity_error")
+    end
+  end
 end
 
 Sequel::Model.send(:extend, CarrierWave::Sequel)
